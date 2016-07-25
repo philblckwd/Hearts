@@ -22,7 +22,7 @@ namespace WpfApplication1
     {
         Cards card = new Cards();
         Table table = new Table();
-        Players player = new Players();
+        Players player = new Players(); 
 
         List<Label> labels = new List<Label>();
         List<ListBox> listBoxes = new List<ListBox>();
