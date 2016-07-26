@@ -20,14 +20,12 @@ namespace WpfApplication1
     /// </summary>
     public partial class MainWindow : Window
     {
-        Cards card = new Cards();
         Table table = new Table();
-        Players player = new Players(); 
 
-        List<Label> labels = new List<Label>();
-        List<ListBox> listBoxes = new List<ListBox>();
-        List<TextBlock> scoreBoxes = new List<TextBlock>();
-        List<TextBlock> selectedCardLabels = new List<TextBlock>();
+        //List<TextBlock> labels = new List<TextBlock>();
+        //List<ListBox> listBoxes = new List<ListBox>();
+        //List<TextBlock> scoreBoxes = new List<TextBlock>();
+        //List<TextBlock> selectedCardLabels = new List<TextBlock>();
         Dictionary<ListBox, TextBlock> references = new Dictionary<ListBox, TextBlock>();
 
         int count = 0;
@@ -41,18 +39,27 @@ namespace WpfApplication1
 
         private void Game_Loaded(object sender, RoutedEventArgs e)
         {
-            addLabels();
-            addListBoxes();
-            addScoreBoxes();
-            addSelectedCardLabels();
+            //addLabels();
+            //addListBoxes();
+            //addScoreBoxes();
+            //addSelectedCardLabels();
             addReferences();
         }
 
         private void playBtn_Click(object sender, RoutedEventArgs e)
         {
-            makeObjectsVisible();
+            Players player1 = new Players(label1, listBox1, player1Score, selectedCardLabel1, "Player1");
+            Players comp1 = new Players(label2, listBox2, Comp1Score, selectedCardLabel2, "Comp1");
+            Players comp2 = new Players(label3, listBox3, Comp2Score, selectedCardLabel3, "Comp2");
+            Players comp3 = new Players(label4, listBox4, Comp3Score, selectedCardLabel4, "Comp3");
 
-            table.addPlayers();
+            table.players.Add(player1);
+            table.players.Add(comp1);
+            table.players.Add(comp2);
+            table.players.Add(comp3);
+
+            makeObjectsVisible();
+            
             table.deal();
             assignPlayers();
             dealCards();
@@ -63,42 +70,10 @@ namespace WpfApplication1
 
             indexOfStartingPlayer = indexListBox;
 
-            if (selectedCardLabels[indexListBox] == references[listBox1])
+            if (table.players[indexListBox].selectedCardLabel == references[listBox1])
             {
                 onPickCardBtnClick(true);
             }
-        }
-
-        private void addLabels()
-        {
-            labels.Add(label1);
-            labels.Add(label2);
-            labels.Add(label3);
-            labels.Add(label4);
-        }
-
-        private void addListBoxes()
-        {
-            listBoxes.Add(listBox1);
-            listBoxes.Add(listBox2);
-            listBoxes.Add(listBox3);
-            listBoxes.Add(listBox4);
-        }
-
-        private void addScoreBoxes()
-        {
-            scoreBoxes.Add(player1Score);
-            scoreBoxes.Add(Comp1Score);
-            scoreBoxes.Add(Comp2Score);
-            scoreBoxes.Add(Comp3Score);
-        }
-
-        private void addSelectedCardLabels()
-        {
-            selectedCardLabels.Add(selectedCardLabel1);
-            selectedCardLabels.Add(selectedCardLabel2);
-            selectedCardLabels.Add(selectedCardLabel3);
-            selectedCardLabels.Add(selectedCardLabel4);
         }
 
         private void addReferences()
@@ -111,25 +86,21 @@ namespace WpfApplication1
 
         private void assignPlayers()
         {
-            int i = 0; // to cycle through players names for foreach loop below
-            foreach (Label label in labels)
+            foreach (Players player in table.players)
             {
-                label.Content = table.players[i].name;
-                i++;
+                player.nameLabel.Text = player.name;
             }
         }
 
         private void dealCards()
         {
-            int i = 0; // again, to cycle through players names for foreach loop below
-            foreach (ListBox listBox in listBoxes)
+            foreach(Players player in table.players)
             {
-                List<string> theCards = table.players[i].showCards();
-                foreach (string card in theCards)
+                List<string> theCards = player.showCards();
+                foreach(string card in theCards)
                 {
-                    listBox.Items.Add(card);
+                    player.cardsListBox.Items.Add(card);
                 }
-                i++;
             }
         }
 
@@ -139,20 +110,20 @@ namespace WpfApplication1
             string chosenCard;
             if (!twoOfClubsPlayer1)
             {
-                chosenCard = listBoxes[0].SelectedItem.ToString();
-                selectedCardLabels[0].Text = chosenCard;
-                listBoxes[0].Items.Remove(listBoxes[0].SelectedItem);
+                chosenCard = table.players[0].cardsListBox.SelectedItem.ToString();
+                table.players[0].selectedCardLabel.Text = chosenCard;
+                table.players[0].cardsListBox.Items.Remove(table.players[0].cardsListBox.SelectedItem);
             }
             else
             {
                 chosenCard = "Two of Clubs";
             }
 
-            for (int i = 1; i < listBoxes.Count; i++)
+            for (int i = 1; i < table.players.Count; i++)
             {
-                if (references[listBoxes[i]].Text == "")
+                if (references[table.players[i].cardsListBox].Text == "")
                 {
-                    pickComputersCard(table.getStringSuitOfCard(chosenCard), listBoxes[i]);
+                    pickComputersCard(table.getStringSuitOfCard(chosenCard), table.players[i].cardsListBox);
                 }
             }
 
@@ -174,10 +145,10 @@ namespace WpfApplication1
         private void addScoreToPlayer(int score, int index)
         {
             int receiver;
-            if (int.TryParse(scoreBoxes[index].Text, out receiver))
+            if (int.TryParse(table.players[index].scoreTextBlock.Text, out receiver))
             {
                 receiver += score;
-                scoreBoxes[index].Text = receiver.ToString();
+                table.players[index].scoreTextBlock.Text = receiver.ToString();
             }
             else
             {
@@ -187,11 +158,11 @@ namespace WpfApplication1
 
         private void makeObjectsVisible()
         {
-            listBoxes[0].Visibility = Visibility.Visible;
+            table.players[0].cardsListBox.Visibility = Visibility.Visible;
             pickCardBtn.Visibility = Visibility.Visible;
-            foreach(TextBlock scorebox in scoreBoxes)
+            foreach(Players player in table.players)
             {
-                scorebox.Visibility = Visibility.Visible;
+                player.scoreTextBlock.Visibility = Visibility.Visible;
             }
         }
 
@@ -200,9 +171,9 @@ namespace WpfApplication1
             if (count >= 1)
             {
                 indexOfStartingPlayer = indexOfLoser;
-                foreach (TextBlock label in selectedCardLabels)
+                foreach (Players player in table.players)
                 {
-                    label.Text = "";
+                    player.selectedCardLabel.Text = "";
                 }
             }
             count++;
@@ -210,31 +181,31 @@ namespace WpfApplication1
         
         private void addScoreToLabelOfPlayerWithHighestValueCard()
         {
-            string startingPlayerSuit = table.getStringSuitOfCard(selectedCardLabels[indexOfStartingPlayer].Text);
+            string startingPlayerSuit = table.getStringSuitOfCard(table.players[indexOfStartingPlayer].selectedCardLabel.Text);
             string[] selectedCardsForComparison = { selectedCardLabel1.Text, selectedCardLabel2.Text, selectedCardLabel3.Text, selectedCardLabel4.Text };
             indexOfLoser = table.returnIndexOfHighestCard(startingPlayerSuit, selectedCardsForComparison);
             int score = table.returnScore(selectedCardsForComparison);
             addScoreToPlayer(score, indexOfLoser);
             makeScoresGreen();
-            scoreBoxes[indexOfLoser].Foreground = Brushes.Red;
+            table.players[indexOfLoser].scoreTextBlock.Foreground = Brushes.Red;
         }
 
         private int showTwoOfClubs()
         {
-            int indexListBox = int.Parse(table.findTwoOfClubs(listBoxes)[0].ToString());
-            int indexListBoxItem = int.Parse(table.findTwoOfClubs(listBoxes)[1].ToString());
+            int indexListBox = int.Parse(table.findTwoOfClubs(table.players)[0].ToString());
+            int indexListBoxItem = int.Parse(table.findTwoOfClubs(table.players)[1].ToString());
 
-            selectedCardLabels[indexListBox].Text = listBoxes[indexListBox].Items[indexListBoxItem].ToString();
-            listBoxes[indexListBox].Items.RemoveAt(indexListBoxItem);
+            table.players[indexListBox].selectedCardLabel.Text = table.players[indexListBox].cardsListBox.Items[indexListBoxItem].ToString();
+            table.players[indexListBox].cardsListBox.Items.RemoveAt(indexListBoxItem);
 
             return indexListBox;
         }
 
         private void makeScoresGreen()
         {
-            foreach (TextBlock score in scoreBoxes)
+            foreach (Players player in table.players)
             {
-                score.Foreground = Brushes.Green;
+                player.scoreTextBlock.Foreground = Brushes.Green;
             }
         }
 
@@ -242,11 +213,11 @@ namespace WpfApplication1
         {
             if (indexOfLoser != 0)
             {
-                if (indexOfLoser + 1 < listBoxes.Count)
+                if (indexOfLoser + 1 < table.players.Count)
                 {
-                    for (int i = indexOfLoser + 1; i < listBoxes.Count; i++)
+                    for (int i = indexOfLoser + 1; i < table.players.Count; i++)
                     {
-                        pickComputersCard(table.getStringSuitOfCard(chosenCard), listBoxes[i]);
+                        pickComputersCard(table.getStringSuitOfCard(chosenCard), table.players[i].cardsListBox);
                     }
                 }
             }

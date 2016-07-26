@@ -10,18 +10,11 @@ namespace WpfApplication1
     class Table
     {
         Cards cards = new Cards();
-        Players player1 = new Players("Player1");
-        Players comp1 = new Players("Comp1");
-        Players comp2 = new Players("Comp2");
-        Players comp3 = new Players("Comp3");
         public List<Players> players = new List<Players>();
 
-        public void addPlayers()
+        public Table()
         {
-            players.Add(player1);
-            players.Add(comp1);
-            players.Add(comp2);
-            players.Add(comp3);
+            
         }
 
         public void deal()
@@ -42,16 +35,16 @@ namespace WpfApplication1
             }
         }
 
-        public string findTwoOfClubs(List<ListBox> listboxList)
+        public string findTwoOfClubs(List<Players> playersList)
         {
             bool found = false;
             int indexListbox = 0;
             int indexListboxItem = 0;
-            for (int i = 0; i < listboxList.Count; i++)
+            for (int i = 0; i < playersList.Count; i++)
             {
-                for (int j = 0; j < listboxList[i].Items.Count; j++)
+                for (int j = 0; j < playersList[i].cardsListBox.Items.Count; j++)
                 {
-                    if (listboxList[i].Items[j].ToString() == "Two of Clubs")
+                    if (playersList[i].cardsListBox.Items[j].ToString() == "Two of Clubs")
                     {
                         found = true;
                         indexListbox = i;

@@ -13,10 +13,6 @@
         <ListBox x:Name="listBox2" HorizontalAlignment="Left" Height="50" VerticalAlignment="Top" Width="130" Margin="377,135,0,0" />
         <ListBox x:Name="listBox3" HorizontalAlignment="Left" Height="50" VerticalAlignment="Top" Width="130" Margin="193,260,0,0" />
         <ListBox x:Name="listBox4" HorizontalAlignment="Left" Height="50" VerticalAlignment="Top" Width="130" Margin="10,135,0,0" />
-        <Label x:Name="label1" Content="" HorizontalAlignment="Left" Margin="118,5,0,0" VerticalAlignment="Top" Width="58" Height="25"/>
-        <Label x:Name="label2" Content="" HorizontalAlignment="Left" Margin="449,107,0,0" VerticalAlignment="Top" Width="58" Height="25"/>
-        <Label x:Name="label3" Content="" HorizontalAlignment="Left" Margin="118,285,0,0" VerticalAlignment="Top" Width="58" Height="25"/>
-        <Label x:Name="label4" Content="" HorizontalAlignment="Left" Margin="18,107,0,0" VerticalAlignment="Top" Width="58" Height="25"/>
         <Button x:Name="pickCardBtn" Content="Pick" HorizontalAlignment="Left" Margin="352,22,0,0" VerticalAlignment="Top" Width="54" Click="pickCardBtn_Click" Visibility="Hidden"/>
         <TextBlock x:Name="selectedCardLabel1" HorizontalAlignment="Left" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Margin="222,60,0,0" Height="31" Width="70"/>
         <TextBlock x:Name="selectedCardLabel2" HorizontalAlignment="Left" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Margin="302,158,0,0" Width="70" Height="31"/>
@@ -26,6 +22,10 @@
         <TextBlock x:Name="Comp1Score" HorizontalAlignment="Left" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Margin="394,116,0,0" Visibility="Hidden" Foreground="Green" FontWeight="Bold"/>
         <TextBlock x:Name="Comp2Score" HorizontalAlignment="Left" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Margin="118,264,0,0" Visibility="Hidden" Foreground="Green" FontWeight="Bold"/>
         <TextBlock x:Name="Comp3Score" HorizontalAlignment="Left" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Margin="81,119,0,0" Visibility="Hidden" Foreground="Green" FontWeight="Bold"/>
+        <TextBlock x:Name="label1" HorizontalAlignment="Left" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Margin="138,10,0,0"/>
+        <TextBlock x:Name="label2" HorizontalAlignment="Left" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Margin="457,114,0,0"/>
+        <TextBlock x:Name="label3" HorizontalAlignment="Left" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Margin="138,294,0,0"/>
+        <TextBlock x:Name="label4" HorizontalAlignment="Left" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Margin="10,114,0,0"/>
 
     </Grid>
 </Window>
