@@ -64,34 +64,31 @@ namespace WpfApplication1
         {
             List<string> validCardsValuesString = new List<string>();
             List<int> validCardsValuesInt = new List<int>();
-            List<string> HeartsValuesString = new List<string>();
-            List<int> HeartsValuesInt = new List<int>();
+            List<string> otherValuesString = new List<string>();
+            List<int> otherValuesInt = new List<int>();
 
             for (int i = 0; i < listbox.Items.Count; i++)
             {
                 string card = listbox.Items[i].ToString();
                 if (card.Contains(correctSuit))
                 {
-                    string[] splitCorrect = card.Split();
-                    validCardsValuesString.Add(splitCorrect[0]);
+                    validCardsValuesString.Add(card);
                 }
-                else if (card.Contains("Hearts"))
+                else
                 {
-                    string[] splitHearts = card.Split();
-                    HeartsValuesString.Add(splitHearts[0]);
+                    otherValuesString.Add(card);
                 }
             }
-            convertArrayOfStringsToEnumValuesToIntegers(validCardsValuesString, validCardsValuesInt);
-            convertArrayOfStringsToEnumValuesToIntegers(HeartsValuesString, HeartsValuesInt);
 
             if (validCardsValuesInt.Count > 0)
             {
-                int index = getIndexOfMinValue(validCardsValuesInt);
+                convertArrayOfStringsToEnumValuesToIntegers(validCardsValuesString, validCardsValuesInt);
+                int indexOfMin = getIndexOfMinValue(validCardsValuesInt);
 
                 int indexListboxItem = 0;
                 for (int j = 0; j < listbox.Items.Count; j++)
                 {
-                    if (listbox.Items[j].ToString() == $"{validCardsValuesString[index]} of {correctSuit}")
+                    if (listbox.Items[j].ToString() == $"{validCardsValuesString[indexOfMin]} of {correctSuit}")
                     {
                         indexListboxItem = j;
                         break;
@@ -102,12 +99,13 @@ namespace WpfApplication1
             }
             else
             {
-                int index = getIndexOfMaxValue(HeartsValuesInt);
+                convertArrayOfStringsToEnumValuesToIntegers(otherValuesString, otherValuesInt);
+                int indexOfMax = getIndexOfMaxValue(otherValuesInt);
 
                 int indexListboxItem = 0;
                 for (int j = 0; j < listbox.Items.Count; j++)
                 {
-                    if (listbox.Items[j].ToString() == $"{validCardsValuesString[index]} of {correctSuit}")
+                    if (listbox.Items[j].ToString() == $"{otherValuesString[indexOfMax]} of {otherValuesString[indexOfMax].Split()[2]}")
                     {
                         indexListboxItem = j;
                         break;
@@ -123,16 +121,16 @@ namespace WpfApplication1
             return validCardsValues.IndexOf(validCardsValues.Min());
         }
 
-        private int getIndexOfMaxValue(List<int> HeartsCardsValues)
+        private int getIndexOfMaxValue(List<int> otherCardsValues)
         {
-            return HeartsCardsValues.IndexOf(HeartsCardsValues.Max());
+            return otherCardsValues.IndexOf(otherCardsValues.Max());
         }
 
         private void convertArrayOfStringsToEnumValuesToIntegers(List<string> stringCardValues, List<int> intCardValues)
         {
             foreach (string card in stringCardValues)
             {
-                int value = (int)Enum.Parse(typeof(Cards.cardValue), card);
+                int value = (int)Enum.Parse(typeof(Cards.cardValue), card.Split()[0]);
                 intCardValues.Add(value);
             }
         }

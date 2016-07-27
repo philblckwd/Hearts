@@ -23,17 +23,10 @@ namespace WpfApplication1
         Table table = new Table();
         Random rand = new Random();
         Cards card = new Cards();
-        bool isClicked;
-
-        //List<TextBlock> labels = new List<TextBlock>();
-        //List<ListBox> listBoxes = new List<ListBox>();
-        //List<TextBlock> scoreBoxes = new List<TextBlock>();
-        //List<TextBlock> selectedCardLabels = new List<TextBlock>();
-        Dictionary<ListBox, TextBlock> references = new Dictionary<ListBox, TextBlock>();
-
-        int count = 0;
+        
         int indexOfStartingPlayer;
         int indexOfLoser;
+        string chosenCard;
 
         public MainWindow()
         {
@@ -42,16 +35,11 @@ namespace WpfApplication1
 
         private void Game_Loaded(object sender, RoutedEventArgs e)
         {
-            //addLabels();
-            //addListBoxes();
-            //addScoreBoxes();
-            //addSelectedCardLabels();
-            addReferences();
         }
 
         private void playBtn_Click(object sender, RoutedEventArgs e)
         {
-            Players player1 = new Players(label1, listBox1, player1Score, selectedCardLabel1, "Player1");
+            Players player1 = new Players(label1, listBox1, player1Score, selectedCardLabel1, "Player1"); //simplify with struct
             Players comp1 = new Players(label2, listBox2, Comp1Score, selectedCardLabel2, "Comp1");
             Players comp2 = new Players(label3, listBox3, Comp2Score, selectedCardLabel3, "Comp2");
             Players comp3 = new Players(label4, listBox4, Comp3Score, selectedCardLabel4, "Comp3");
@@ -69,22 +57,18 @@ namespace WpfApplication1
 
             playBtn.Visibility = Visibility.Hidden;
 
-            int indexListBox = showTwoOfClubs();
+            int indexListBox = getTwoOfClubs();
 
             indexOfStartingPlayer = indexListBox;
 
-            if (table.players[indexOfStartingPlayer].selectedCardLabel == references[listBox1])
+            if (table.players[indexOfStartingPlayer].selectedCardLabel == table.players[0].selectedCardLabel)
             {
                 onPickCardBtnClick(true);
             }
-        }
-
-        private void addReferences()
-        {
-            references.Add(listBox1, selectedCardLabel1);
-            references.Add(listBox2, selectedCardLabel2);
-            references.Add(listBox3, selectedCardLabel3);
-            references.Add(listBox4, selectedCardLabel4);
+            else
+            {
+                checkForStartingPlayer();
+            }
         }
 
         private void assignPlayers()
@@ -106,11 +90,9 @@ namespace WpfApplication1
                 }
             }
         }
-        ListBox test = new ListBox();
+        
         private void onPickCardBtnClick(bool twoOfClubs)
         {
-            checkCountIterationToClearLabelsAfterRounds();
-            string chosenCard;
             if (!twoOfClubs)
             {
                 if (indexOfStartingPlayer == 0)
@@ -118,46 +100,98 @@ namespace WpfApplication1
                     chosenCard = table.players[0].cardsListBox.SelectedItem.ToString();
                     table.players[0].selectedCardLabel.Text = chosenCard;
                     table.players[0].cardsListBox.Items.Remove(table.players[0].cardsListBox.SelectedItem);
+                    for (int i = 1; i < table.players.Count; i++)
+                    {
+                        if (table.players[i].selectedCardLabel.Text == "")
+                        {
+                            pickComputersCard(false, table.getStringSuitOfCard(chosenCard), table.players[i].cardsListBox);
+                        }
+                    }
                 }
                 else
                 {
-                    pickComputersCard(((Cards.cardSuit)rand.Next(0, 4)).ToString(), table.players[indexOfStartingPlayer].cardsListBox);
-                    chosenCard = table.players[indexOfStartingPlayer].selectedCardLabel.Text;
+                    table.players[0].selectedCardLabel.Text = table.players[0].cardsListBox.SelectedItem.ToString();
+                    table.players[0].cardsListBox.Items.Remove(table.players[0].cardsListBox.SelectedItem);
+                    for (int i=1;i<table.players.Count; i++)
+                    {
+                        if (table.players[i].selectedCardLabel.Text == "")
+                        {
+                            pickComputersCard(false, table.getStringSuitOfCard(chosenCard), table.players[i].cardsListBox);
+                        }
+                    }
                 }
             }
             else
             {
                 chosenCard = "Two of Clubs";
-            }
-
-            checkForStartingPlayer(indexOfStartingPlayer, chosenCard);
-
-            for (int i = 1; i < table.players.Count; i++)
-            {
-                if (references[table.players[i].cardsListBox].Text == "")
+                for(int i=1; i<table.players.Count; i++)
                 {
-                    pickComputersCard(table.getStringSuitOfCard(chosenCard), table.players[i].cardsListBox);
+                    pickComputersCard(false, table.getStringSuitOfCard(chosenCard), table.players[i].cardsListBox);
                 }
+                pickCardBtn.Visibility = Visibility.Hidden;
+                nextRoundBtn.Visibility = Visibility.Visible;
             }
+
+            //pickComputersCard(((Cards.cardSuit)rand.Next(0, 4)).ToString(), table.players[indexOfStartingPlayer].cardsListBox);
+            //chosenCard = table.players[indexOfStartingPlayer].selectedCardLabel.Text;
+            //checkForStartingPlayer(indexOfStartingPlayer, chosenCard);
+
+            //for (int i = 1; i < table.players.Count; i++)
+            //{
+            //    if (references[table.players[i].cardsListBox].Text == "")
+            //    {
+            //        pickComputersCard(table.getStringSuitOfCard(chosenCard), table.players[i].cardsListBox);
+            //    }
+            //}
 
             addScoreToLabelOfPlayerWithHighestValueCard();
-            if (indexOfLoser != 0)
-            {
-                onPickCardBtnClick(false);
-            }
+            indexOfStartingPlayer = indexOfLoser;
         }
 
         private void pickCardBtn_Click(object sender, RoutedEventArgs e)
         {
-            isClicked = true;
-            onPickCardBtnClick(false);
+            bool areLabelsEmpty = checkIfLabelsAreEmpty();
+            if (areLabelsEmpty)
+            {
+                onPickCardBtnClick(false);
+            }
+            else
+            {
+                checkForStartingPlayer();
+            }
+            pickCardBtn.Visibility = Visibility.Hidden;
+            nextRoundBtn.Visibility = Visibility.Visible;
         }
 
-        private void pickComputersCard(string suit, ListBox listbox)
+        private void nextRound_Click(object sender, RoutedEventArgs e)
         {
+            clearAllLabels();
+            if (indexOfLoser != 0)
+            {
+                checkForStartingPlayer();
+            }
+            nextRoundBtn.Visibility = Visibility.Hidden;
+            pickCardBtn.Visibility = Visibility.Visible;
+        }
+
+        private void pickComputersCard(bool isStartingCard, string suit, ListBox listbox)
+        {
+            TextBlock selectedLabel = new TextBlock();
+            foreach (Players player in table.players)
+            {
+                if (player.cardsListBox == listbox)
+                {
+                    selectedLabel = player.selectedCardLabel;
+                }
+            }
+
             int index = table.pickLowestCardOfCorrectSuit(suit, listbox);
-            references[listbox].Text = listbox.Items[index].ToString();
+            selectedLabel.Text = listbox.Items[index].ToString();
             listbox.Items.Remove(listbox.Items[index].ToString());
+            if (isStartingCard)
+            {
+                chosenCard = selectedLabel.Text;
+            }
         }
 
         private void addScoreToPlayer(int score, int index)
@@ -184,19 +218,33 @@ namespace WpfApplication1
             }
         }
 
-        private void checkCountIterationToClearLabelsAfterRounds()
+        //private void checkCountIterationToClearLabelsAfterRounds()
+        //{
+        //    if (count >= 1)
+        //    {
+        //        indexOfStartingPlayer = indexOfLoser;
+        //        foreach (Players player in table.players)
+        //        {
+        //            player.selectedCardLabel.Text = "";
+        //        }
+        //    }
+        //    count++;
+        //}
+
+        private bool checkIfLabelsAreEmpty()
         {
-            if (count >= 1)
+            int count = 0;
+            for(int i=1; i<table.players.Count; i++)
             {
-                indexOfStartingPlayer = indexOfLoser;
-                foreach (Players player in table.players)
+                if (table.players[i].selectedCardLabel.Text == "")
                 {
-                    player.selectedCardLabel.Text = "";
+                    count++;
                 }
             }
-            count++;
+            bool x = count > 0 ? true : false;
+            return x;
         }
-        
+
         private void addScoreToLabelOfPlayerWithHighestValueCard()
         {
             string startingPlayerSuit = table.getStringSuitOfCard(table.players[indexOfStartingPlayer].selectedCardLabel.Text);
@@ -208,13 +256,15 @@ namespace WpfApplication1
             table.players[indexOfLoser].scoreTextBlock.Foreground = Brushes.Red;
         }
 
-        private int showTwoOfClubs()
+        private int getTwoOfClubs()
         {
             int indexListBox = int.Parse(table.findTwoOfClubs(table.players)[0].ToString());
             int indexListBoxItem = int.Parse(table.findTwoOfClubs(table.players)[1].ToString());
 
             table.players[indexListBox].selectedCardLabel.Text = table.players[indexListBox].cardsListBox.Items[indexListBoxItem].ToString();
             table.players[indexListBox].cardsListBox.Items.RemoveAt(indexListBoxItem);
+
+            chosenCard = table.players[indexListBox].selectedCardLabel.Text;
 
             return indexListBox;
         }
@@ -227,28 +277,48 @@ namespace WpfApplication1
             }
         }
 
-        private void checkForStartingPlayer(int indexOfLoser, string chosenCard)
+        //private void checkForStartingPlayer(int indexOfLoser, string chosenCard)
+        //{
+        //    isClicked = false;
+        //    if (indexOfLoser != 0)
+        //    {
+        //        if (indexOfLoser + 1 < table.players.Count)
+        //        {
+        //            for (int i = indexOfLoser + 1; i < table.players.Count; i++)
+        //            {
+        //                pickComputersCard(table.getStringSuitOfCard(chosenCard), table.players[i].cardsListBox);
+        //            }
+        //        }
+        //        if (isClicked)
+        //        {
+        //            for (int i = 1; i < table.players.Count; i++)
+        //            {
+        //                if (references[table.players[i].cardsListBox].Text == "")
+        //                {
+        //                    pickComputersCard(table.getStringSuitOfCard(chosenCard), table.players[i].cardsListBox);
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
+
+        private void checkForStartingPlayer()
         {
-            isClicked = false;
-            if (indexOfLoser != 0)
+            if (indexOfStartingPlayer != 0)
             {
-                if (indexOfLoser + 1 < table.players.Count)
+                pickComputersCard(true, ((Cards.cardSuit)rand.Next(0, 4)).ToString(), table.players[indexOfStartingPlayer].cardsListBox);
+                for (int i = indexOfStartingPlayer + 1; i < table.players.Count; i++)
                 {
-                    for (int i = indexOfLoser + 1; i < table.players.Count; i++)
-                    {
-                        pickComputersCard(table.getStringSuitOfCard(chosenCard), table.players[i].cardsListBox);
-                    }
+                    pickComputersCard(false, table.getStringSuitOfCard(chosenCard), table.players[i].cardsListBox);
                 }
-                if (isClicked)
-                {
-                    for (int i = 1; i < table.players.Count; i++)
-                    {
-                        if (references[table.players[i].cardsListBox].Text == "")
-                        {
-                            pickComputersCard(table.getStringSuitOfCard(chosenCard), table.players[i].cardsListBox);
-                        }
-                    }
-                }
+            }
+        }
+
+        private void clearAllLabels()
+        {
+            foreach(Players player in table.players)
+            {
+                player.selectedCardLabel.Text = "";
             }
         }
     }

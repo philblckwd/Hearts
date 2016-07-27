@@ -14,6 +14,7 @@
         <ListBox x:Name="listBox3" HorizontalAlignment="Left" Height="50" VerticalAlignment="Top" Width="130" Margin="193,260,0,0" />
         <ListBox x:Name="listBox4" HorizontalAlignment="Left" Height="50" VerticalAlignment="Top" Width="130" Margin="10,135,0,0" />
         <Button x:Name="pickCardBtn" Content="Pick" HorizontalAlignment="Left" Margin="352,22,0,0" VerticalAlignment="Top" Width="54" Click="pickCardBtn_Click" Visibility="Hidden"/>
+        <Button x:Name="nextRoundBtn" Content="Next Round" HorizontalAlignment="Left" Margin="352,22,0,0" VerticalAlignment="Top" Width="75" Click="nextRound_Click" Visibility="Hidden"/>
         <TextBlock x:Name="selectedCardLabel1" HorizontalAlignment="Left" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Margin="222,60,0,0" Height="31" Width="70"/>
         <TextBlock x:Name="selectedCardLabel2" HorizontalAlignment="Left" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Margin="302,158,0,0" Width="70" Height="31"/>
         <TextBlock x:Name="selectedCardLabel3" HorizontalAlignment="Left" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Margin="222,226,0,0" Height="31" Width="70"/>
