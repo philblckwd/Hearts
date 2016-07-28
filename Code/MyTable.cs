@@ -5,14 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 
-namespace WpfApplication1
+namespace Code
 {
-    class Table
+    public class MyTable
     {
         Cards cards = new Cards();
         public List<Players> players = new List<Players>();
 
-        public Table()
+        public MyTable()
         {
             
         }
@@ -54,10 +54,10 @@ namespace WpfApplication1
                 }
                 if (found == true)
                 {
-                    break;
+                    return $"{indexListbox.ToString()}{indexListboxItem.ToString()}";
                 }
             }
-            return $"{indexListbox.ToString()}{indexListboxItem.ToString()}";
+            return "Error";
         }
 
         public int pickLowestCardOfCorrectSuit(string correctSuit, ListBox listbox)
@@ -80,40 +80,32 @@ namespace WpfApplication1
                 }
             }
 
-            if (validCardsValuesInt.Count > 0)
+            if (validCardsValuesString.Count > 0)
             {
-                convertArrayOfStringsToEnumValuesToIntegers(validCardsValuesString, validCardsValuesInt);
-                int indexOfMin = getIndexOfMinValue(validCardsValuesInt);
-
-                int indexListboxItem = 0;
-                for (int j = 0; j < listbox.Items.Count; j++)
-                {
-                    if (listbox.Items[j].ToString() == $"{validCardsValuesString[indexOfMin]} of {correctSuit}")
-                    {
-                        indexListboxItem = j;
-                        break;
-                    }
-                }
-
-                return indexListboxItem;
+                return indexOfListBoxItem(listbox, validCardsValuesString, validCardsValuesInt);
             }
             else
             {
-                convertArrayOfStringsToEnumValuesToIntegers(otherValuesString, otherValuesInt);
-                int indexOfMax = getIndexOfMaxValue(otherValuesInt);
-
-                int indexListboxItem = 0;
-                for (int j = 0; j < listbox.Items.Count; j++)
-                {
-                    if (listbox.Items[j].ToString() == $"{otherValuesString[indexOfMax]} of {otherValuesString[indexOfMax].Split()[2]}")
-                    {
-                        indexListboxItem = j;
-                        break;
-                    }
-                }
-
-                return indexListboxItem;
+                return indexOfListBoxItem(listbox, otherValuesString, otherValuesInt);
             }
+        }
+
+        private int indexOfListBoxItem(ListBox listbox, List<string> cardsStringValues, List<int> cardsIntValues)
+        {
+            convertArrayOfStringsToEnumValuesToIntegers(cardsStringValues, cardsIntValues);
+            int indexOfMax = getIndexOfMaxValue(cardsIntValues);
+
+            int indexListboxItem = 0;
+            for (int j = 0; j < listbox.Items.Count; j++)
+            {
+                if (listbox.Items[j].ToString() == $"{cardsStringValues[indexOfMax].Split()[0]} of {cardsStringValues[indexOfMax].Split()[2]}")
+                {
+                    indexListboxItem = j;
+                    break;
+                }
+            }
+
+            return indexListboxItem;
         }
 
         private int getIndexOfMinValue(List<int> validCardsValues)

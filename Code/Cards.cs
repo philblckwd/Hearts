@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WpfApplication1
+namespace Code
 {
-    class Cards
+    public class Cards
     {
         public cardValue value { get; private set; }
         public cardSuit suit { get; private set; }
